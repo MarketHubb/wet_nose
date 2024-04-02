@@ -25,7 +25,9 @@ module.exports = {
                 dark: '#1F2937',
                 primary: '#1e5c46',
                 secondary: '#8d021c',
-                secondaryLight: '#C00326'
+                secondaryLight: '#C00326',
+                input: '#9f763c',
+                inputFill: '#FCF6E6',
             },
             // colors: tailpress.colorMapper(tailpress.theme('settings.color.palette', theme)),
             fontSize: tailpress.fontSizeMapper(tailpress.theme('settings.typography.fontSizes', theme))
@@ -40,6 +42,9 @@ module.exports = {
         }
     },
     plugins: [
-        tailpress.tailwind
+        tailpress.tailwind,
+        require('@tailwindcss/forms'),
+        require('@tailwindcss/typography'),
+        require('@tailwindcss/aspect-ratio'),
     ]
 };

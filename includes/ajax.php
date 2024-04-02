@@ -1,4 +1,31 @@
 <?php
+add_action('wp_ajax_doggo_recipe_inputs', 'doggo_recipe_inputs');
+add_action('wp_ajax_nopriv_doggo_recipe_inputs', 'doggo_recipe_inputs');
+
+function doggo_recipe_inputs()
+{
+    if (!empty($_POST['recipeIds'])) {
+        $recipe_ids = $_POST['recipeIds'];
+        global $wp_embed, $post;
+        $output = [];
+        $i = 1;
+        $html_output = '';
+
+        foreach ($recipe_ids as $recipe_id) {
+            $html_output .= recipe_details_for_doggo_profile($recipe_id, $i);
+            $output[$recipe_id] = recipe_details_for_doggo_profile($recipe_id, $i);
+            $i++;
+        }
+
+        // echo json_encode($output);
+        echo json_encode($html_output);
+
+        wp_reset_postdata();
+    }
+    
+    die();
+}
+
 add_action('wp_ajax_form_create_temp_user', 'form_create_temp_user');
 add_action('wp_ajax_nopriv_form_create_temp_user', 'form_create_temp_user');
 
@@ -94,7 +121,7 @@ function create_temp_customer_user()
     $user_setup = $user_registration->maybe_process_feed($partial_entry, $form);
 
     if (is_wp_error($user_setup)) {
-        wp_send_json_error($user_setup->get_error_message());
+        wp_send_json_error($user_setup);
     } else {
         wp_send_json_success('User created');
     }
@@ -233,3 +260,4 @@ function get_recipe_inputs()
     }
     die();
 }
+

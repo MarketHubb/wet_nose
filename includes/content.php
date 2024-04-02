@@ -1,4 +1,97 @@
 <?php
+// Form - Doggo Profile (Ingredients)
+function recipe_macros_for_doggo_profile($post_id)
+{
+    $recipe_inputs = getIngredientsforRecipes($post_id, 1);
+    $output = '<dl class="grid grid-cols-2 gap-y-3 content-center items-center md:grid-cols-2 text-base">';
+    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Protein:</span></dt>';
+    $output .= '<dd class="mt-0 border-transparent">';
+    $output .= '<span class="stylized font-bold ps-0 mt-0">';
+    $output .= $recipe_inputs[0]['totals']['protein']['percent'] . '%';
+    $output .= '</span></dd>';
+    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Fat:</span></dt>';
+    $output .= '<dd class="mt-0"><span class="stylized font-bold ps-0 mt-0">';
+    $output .= $recipe_inputs[0]['totals']['fat']['percent'] . '%';
+    $output .= '</span></dd>';
+    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Carbs:</span></dt>';
+    $output .= '<dd class="mt-0"><span class="stylized font-bold ps-0 mt-0">';
+    $output .= $recipe_inputs[0]['totals']['carbs']['percent'] . '%';
+    $output .= '</span></dd></dl>';
+
+    return $output;
+}
+function recipe_ingredients_for_doggo_profile($post_id)
+{
+    $recipe_inputs = getIngredientsforRecipes($post_id, 1);
+    $ingredient_count = count($recipe_inputs[0]['ingredients']);
+
+    $output  = '<p class="text-base">';
+    $output .= '<span class="emphasis whitespace-nowrap font-bold mt-2">' . $ingredient_count . ' simple ingredients</span>';
+    $output .= '</p>';
+    $output .= '<dl class="grid grid-cols-1 text-base leading-7 text-gray-600">';
+
+    foreach ($recipe_inputs[0]['ingredients'] as $ingredient) {
+        $output .= '<div class="relative pl-0 py-0">';
+        $output .= '<dt class="font-semibold text-gray-900">';
+        $output .= '<img class="inline-block rounded-full max-h-8 mr-3 my-0" src="' . get_field('ingredient_image_square', $ingredient['post_id'])['url'] . '" />';
+        $output .= '<span class="text-base inline-block">' . $ingredient['ingredient'] . '</span>';
+        $output .= '</dt><dd class="">';
+        $output .= '<span></span>';
+        $output .= '</dd></div>';
+    }
+    $output .= '</dl>';
+
+    return $output;
+}
+
+// Form - Doggo Profile (Recipe Details)
+function recipe_details_for_doggo_profile($post_id, $iteration)
+{
+    $recipe = get_post($post_id);
+    $recipe_details = ['Ingredients', 'Macros'];
+    $i = 1;
+
+    $output  = '<div class="container mx-auto recipe-details py-3 px-1">';
+    $output .= '<div class="text-center mb-6 relative">';
+
+    // $output .= '<h3 class="text-lg mb-5 block stylized whitespace-nowrap font-bold">';
+    // $output .= get_the_title($post_id) . '</h3>';
+    $output .= '<img class="aspect-[12/10] object-bottom w-full object-cover rounded-md shadow" src="' . get_field('recipe_image', $post_id)['url'] . '" />';
+    $output .= '<img src="' . get_home_url() . '/wp-content/uploads/2023/12/check.svg" class="selected-recipe-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-24"/>';
+    $output .= '</div>';
+
+    foreach ($recipe_details as $recipe_detail) {
+        $output .= '<section class="profile-recipe-accordion" aria-labelledby="details-heading" class="mt-12">';
+        $output .= '<h2 id="details-heading" class="sr-only">Recipe details</h2>';
+        $output .= '<div class="divide-y divide-gray-200 px-4">';
+        // Button
+        $output .= '<div><h3>';
+        $output .= '<button type="button" class="group relative flex w-full items-center justify-between py-2 text-left" aria-controls="disclosure-' . $iteration . '" aria-expanded="false">';
+        $output .= '<span class=" text-sm stylized font-bold accordion-btn">' . $recipe_detail . '</span><span class="ml-6 flex items-center">';
+        $output .= '<svg class="block h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg><svg class="hidden h-6 w-6 text-indigo-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                        </svg>';
+        $output .= '</span></button></h3>';
+        // Content
+        $output .= '<div class="prose prose-sm pb-6 hidden" id="disclosure-' . $iteration . '">';
+
+        if ($recipe_detail === 'Description') $output .= '<p>' . get_field('recipe_description', $post_id) . '</p>';
+        if ($recipe_detail === 'Ingredients') $output .= recipe_ingredients_for_doggo_profile($post_id, $i);
+        if ($recipe_detail === 'Macros') $output .= recipe_macros_for_doggo_profile($post_id, $i);
+
+        $output .= '</div>';
+        $output .= '</div></section>';
+
+        $i++;
+    }
+
+    $output .= '</div>';
+
+    return $output;
+}
+
 // region Recipe Calculator
 function output_table_open()
 {
@@ -6,7 +99,7 @@ function output_table_open()
 }
 function output_table_head($args = [])
 {
-    $output  = '<thead class=" text-gray-900">';
+    $output = '<thead class=" text-gray-900">';
     $output .= '<tr>';
 
     foreach ($args as $key => $val) {
@@ -27,13 +120,13 @@ function output_table_head($args = [])
         $th_classes = $base_th_classes . $th_classes;
 
         $output .= '<th colspan="' . $col_span . '" scope="col" ';
-        $output .= 'class="' . $th_classes . '">';
+        $output .= ' class="' . $th_classes . '">';
         $output .= '<span class="' . $text_classes . '">' . $text . '</span>';
         $output .= '</th>';
-
     }
 
-    $output .= '</tr></thead>';
+    $output .= '</tr>
+                </thead>';
 
     return $output;
 }
@@ -55,14 +148,14 @@ function output_table_row($args = [])
 
 
 
-//  endregion
+// endregion
 
 // region Section content
 function section_start_classes($spacer_classes = true, $additional_classes = null)
 {
-    
+
     $base_classes = "mx-auto container py-24 lg:py-36 xl:py-52 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:pr-24 ";
-    
+
     return ($additional_classes) ? $base_classes . $additional_classes : $base_classes;
 }
 function section_open()
@@ -89,7 +182,7 @@ function get_hero_alert($hero)
 {
     $alert_copy = get_desktop_mobile_copy($hero['alert_link']['copy']);
 
-    $output  = '<div class="sm:mt-32 sm:flex lg:mt-16">';
+    $output = '<div class="sm:mt-32 sm:flex lg:mt-16">';
     $output .= '<div class="inline-flex flex-auto md:flex-initial rounded-full px-4 py-1 text-sm leading-6 bg-primary text-white ring-1 ring-gray-900/10 hover:ring-gray-900/20">';
 
     if ($hero['alert_link']['link']) {
@@ -103,7 +196,8 @@ function get_hero_alert($hero)
         $output .= '</a>';
     }
 
-    $output .= '</div></div>';
+    $output .= '</div>
+                    </div>';
 
     return $output ?: null;
 }
@@ -143,7 +237,7 @@ function getLinks($link_array)
         $arrow = ($link_array['link_style'] === 'Secondary') ? '<span aria-hidden="true">→</span>' : '';
 
         if ($classes && $target) {
-            $link  = '<a href="' . $target . '" class="' . $classes . '">';
+            $link = '<a href="' . $target . '" class="' . $classes . '">';
             $link .= $link_text . $arrow . '</a>';
             $link .= '<a href="' . $target . '" class="' . $classes_mobile . '">';
             $link .= $mobile_link_text . $arrow . '</a>';
@@ -152,4 +246,4 @@ function getLinks($link_array)
         return $link ?: null;
     }
 }
-//endregion
+                    //endregion

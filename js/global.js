@@ -16,9 +16,7 @@
             },
             dataType: "json",
             success: function (user) {
-                console.table("user", user);
                 let user_id = user.data.ID
-                console.table("user_id", user_id);
 
                 if (user_id) {
                     $('form#gform_7 input#input_7_28').val(user_id);
@@ -26,7 +24,6 @@
             },
             complete: function () {
                 let user_id_val = $('form#gform_7 input#input_7_28').val();
-                console.table("user_id_val", user_id_val);
             }
         });
     }
@@ -203,11 +200,9 @@
     // ## EVENT: WINDOW (LOAD) ##
 
     $(window).load(function () {
+        
         // Page: Initialization - Form heading
         setFormHeading();
-
-        // Launch Form (TESTING ONLY)
-        // launchForm();
 
         // FORM: Zip code - Set max length (5) | Move warning | Verify location
         // setMaxLengthZip();
@@ -256,18 +251,18 @@
 
             if (current_page == 3) {
                 // FORM: Recipes - Add data-count attribute
-                setRecipesCountAttr();
+                // setRecipesCountAttr();
             }
 
             if (current_page == 4) {
                 // FORM: Recipes - Set hidden "Recipes Selected" field
-                let recipesSelectedVal = '';
+                // let recipesSelectedVal = '';
                 
-                $('#gform_7 #field_7_15 .gchoice input:checked').each(function (index) {
-                    recipesSelectedVal += $(this).closest('.gchoice').find('label.gform-field-label h3').text() + ((index > 0) ? ' ' : ' & ');
-                });
+                // $('#gform_7 #field_7_15 .gchoice input:checked').each(function (index) {
+                //     recipesSelectedVal += $(this).closest('.gchoice').find('label.gform-field-label h3').text() + ((index > 0) ? ' ' : ' & ');
+                // });
 
-                $('#input_7_25').val(recipesSelectedVal.trim());
+                // $('#input_7_25').val(recipesSelectedVal.trim());
                 
             }
         });

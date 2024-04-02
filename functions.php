@@ -2,6 +2,8 @@
 /**
  * Required
  */
+include 'includes/ajax.php';
+
 require_once(__DIR__ . '/../../../vendor/autoload.php');
 $stripe = new \Stripe\StripeClient("sk_test_51O2cExBQlCuWXXZWzpKBUpOlG4LLe9tDBH659wY5uDL1jArOUoZwTQ4sYHmzdabgo2HR8ehVhvuDeVAicbHgliKe00rObSKXLQ");
 
@@ -14,7 +16,6 @@ include 'includes/hooks.php';
 include 'includes/content.php';
 include 'includes/ingredients.php';
 include 'includes/recipes.php';
-include 'includes/ajax.php';
 
  /**
  * Theme setup.
@@ -85,7 +86,11 @@ function custom_styles_and_scripts()
 	wp_enqueue_style('web-fonts', 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap', [], "1.0");
 	wp_enqueue_style('web-fonts-special', 'https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap', [], "1.0");
 
-	if (!is_singular('ingredient') && !is_singular('recipe')) {
+	// Testing (Form and JS logic)
+	if (is_page(707)) {
+		wp_enqueue_script('testing-scripts', get_template_directory_uri() . '/js/testing.js', array('jquery'), null, true);
+	}
+	if (!is_singular('ingredient') && !is_singular('recipe') && !is_page(707)) {
 		wp_enqueue_script('global-scripts', get_template_directory_uri() . '/js/global.js', array('jquery'), null, true);
 		wp_enqueue_script('doggo-profile-scripts', get_template_directory_uri() . '/js/doggo-profile.js', array('jquery'), null, true);
 	}
