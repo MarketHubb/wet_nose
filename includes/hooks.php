@@ -101,8 +101,7 @@ add_filter('gform_field_content', function ($content, $field, $value, $lead_id, 
     $disabled_classes = "disabled:bg-gray-200 ";
 
     if ($form_id == 10 || $form_id == 7 && $field->type == 'radio' || $field->type == 'checkbox') {
-        // return str_replace("input class='", "input class='gfield-choice-input bg-white focus:outline-input focus:outline-offset-0 focus:ring-0 focus:ring-transparent focus:ring-offset-transparent focus:ring-offset-0 focus:shadow-none focus:text-inputFill checked:bg-none checked:border-input checked:border-2 hover:checked:border-2 checked:bg-inputFill checked:text-transparent focus:border active:bg-inputFill  ", $content);
-        return str_replace('input class=', 'input class="' . $base_input_classes . $checked_classes . $focus_classes . $hover_active_classes . $disabled_classes . '"', $content);
+        return str_replace('gfield-choice-input', $base_input_classes . $checked_classes . $focus_classes . $hover_active_classes . $disabled_classes, $content);
     }
 
     return $content;
