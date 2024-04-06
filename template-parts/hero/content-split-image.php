@@ -2,8 +2,8 @@
 if ($args) { ?>
 <!-- py-12 lg:py-36 xl:py-52  -->
     <div id="hero-main" class="relative bg-main bg-cover bg-no-repeat hero" style="background-image: url(<?php echo $bg_image; ?>);">
-        <div class="mx-auto container h-full py-12 content-center lg:grid lg:grid-cols-12 lg:gap-x-8 lg:pr-24">
-            <div class="pr-6 lg:col-span-7 xl:col-span-6">
+        <div class="mx-auto container h-full py-16 lg:py-20 content-center lg:grid lg:grid-cols-12 lg:gap-x-8 lg:pr-24">
+            <div class="pr-6 lg:col-span-7 xl:col-span-6 md:py-12">
                 <div class="mx-auto max-w-2xl lg:mx-0">
 
                     <!-- Callout Link -->
