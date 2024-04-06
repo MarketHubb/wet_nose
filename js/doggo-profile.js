@@ -3,17 +3,17 @@
     // ## AJAX ##
     function ajaxGetSubscriptionPrice(mer, recipeIds) {
         $.ajax({
-            type: "POST",
-            url: "/wp-admin/admin-ajax.php",
+            type: 'POST',
+            url: '/wp-admin/admin-ajax.php',
             data: {
-                action: "doggo_monthly_cost",
+                action: 'doggo_monthly_cost',
                 mer: mer,
                 recipeIds: recipeIds
             },
-            dataType: "json",
-
+            dataType: 'json',
+ 
             success: function (recipeInputsArray) {
-                console.table("recipeInputsArray", recipeInputsArray);
+                console.table('recipeInputsArray', recipeInputsArray);
                 if (recipeInputsArray.length) {
                     let subscriptionCost = calculateTotalSubscriptionPrice(recipeInputsArray);
                     if (subscriptionCost > 0) {
@@ -21,9 +21,9 @@
                     }
                 }
             },
-            complete: function (recipeInputsArray) {
+            complete: function () {
                 if ($('body input#input_10_24').val() > 0) {
-                    submitBtn.prop('disabled', false);
+                    $(document).find('.tingle-modal-box__footer .gpnf-btn-submit').prop('disabled', false);
                 }
             }
         });
@@ -32,14 +32,14 @@
     // AJAX - Populate recipe inputs
     function populateRecipeInputsDoggoProfile(recipeIds) {
         $.ajax({
-            type: "POST",
-            url: "/wp-admin/admin-ajax.php",
+            type: 'POST',
+            url: '/wp-admin/admin-ajax.php',
             data: {
-                action: "doggo_recipe_inputs",
+                action: 'doggo_recipe_inputs',
                 recipeIds: recipeIds,
             },
-            dataType: "json",
-            success: function (data) {
+            dataType: 'json',
+            success: function () {
                 let recipeInputContainer = $('fieldset#field_10_20 .ginput_container');
                 let recipeDetailsContainer = $('<div id="recipe_details_container" class="grid grid-cols-3 gap-x-8 col-span-12"></div>');
                 recipeInputContainer.after(recipeDetailsContainer);
@@ -58,9 +58,7 @@
     // ## FUNCTIONS ##
     function getRecipeIds(checked) {
         checked = !!checked;
-
         let targetCheckboxEl = (checked) ? 'input[type="checkbox"]:checked' : 'input[type="checkbox"]';
-
         var recipeIds = [];
 
         $(document).find('#input_10_20 ' + targetCheckboxEl).each(function () {
@@ -85,21 +83,9 @@
             totalPrice += item.price.price;
         }
 
-        console.table("totalPrice", totalPrice);
+        console.table('totalPrice', totalPrice);
 
         return totalPrice;
-
-        // let totalPrice = 0;
-
-        // for (let i = 0; i < recipeArray.length; i++) {
-        //     for (let j = 0; j < recipeArray[i].length; j++) {
-        //         totalPrice += recipeArray[i][j].price.price;
-        //     }
-        // }
-
-        // console.table("totalCost", totalPrice);
-
-        // return totalPrice.toFixed(2);
     }
 
 
@@ -119,10 +105,10 @@
         let rer;
         let mer;
 
-        let signalment = Number(formArray.find(item => item.name === "input_6")?.value) || undefined;
-        let activity = Number(formArray.find(item => item.name === "input_15")?.value) || undefined;
-        let bodyType = Number(formArray.find(item => item.name === "input_16")?.value) || undefined;
-        let weight = Number(formArray.find(item => item.name === "input_17")?.value) || undefined;
+        let signalment = Number(formArray.find(item => item.name === 'input_6')?.value) || undefined;
+        let activity = Number(formArray.find(item => item.name === 'input_15')?.value) || undefined;
+        let bodyType = Number(formArray.find(item => item.name === 'input_16')?.value) || undefined;
+        let weight = Number(formArray.find(item => item.name === 'input_17')?.value) || undefined;
 
         if (!signalment || !activity || !bodyType || !weight) {
             return false;
@@ -142,31 +128,6 @@
         return mer;
     }
 
-    function setMerFromDoggoInputs(form) {
-        let inputArray = $('form#gform_10').serializeArray();
-        console.table("inputArray", inputArray);
-        let merInput = form.find('#input_10_18');
-        let formVals = {};
-
-        $.each(inputArray, function (i, field) {
-            if (field.name.includes("input_") && field.value.length > 0) {
-                formVals[field.name] = field.value;
-            }
-        });
-
-        let merVal = calculateMER(formVals);
-
-        if (merVal && merVal > 0) {
-            merInput.val(merVal);
-        }
-
-        return merVal;
-    }
-
-    function checkIfDoggoProfileSubmitIsDefined() {
-        if (typeof submitBtn == 'undefined') submitBtn = $(document).find('.tingle-modal-box__footer .gpnf-btn-submit');
-    }
-
     function setMerAndSubscriptionCost(formArray) {
         let mer = Number(calculateMER(formArray));
 
@@ -181,7 +142,7 @@
         });
 
         if (selectedRecipeIds.length > 0) {
-            ajaxGetSubscriptionPrice(mer, selectedRecipeIds)
+            ajaxGetSubscriptionPrice(mer, selectedRecipeIds);
         }
     }
 
@@ -194,7 +155,7 @@
             }).get();
             formArray = formArray.concat(checkedCheckboxes);
         } else {
-            formArray.push({ name: "input_20", value: "" });
+            formArray.push({ name: 'input_20', value: '' });
         }
 
         setMerAndSubscriptionCost(formArray);
@@ -202,43 +163,19 @@
         return validateDoggoProfileForm(formArray);
     }
 
-    function getSelectedRecipeCheckboxes() {
-        $(document).find('#field_10_20 input[type="checkbox"]').each(function () {
-            // if ($(this).prop('checked')) {
-            console.table("$(this)", $(this));
-            // }
-        });
-    }
-
-    function setActiveClassesForRecipeDetails(recipeDetails, selectedRecipeVal) {
-        recipeDetails.each(function () {
-            const containerId = $(this).data('id').toString();
-
-            if (containerId === selectedRecipeVal) {
-                $(this).toggleClass('selected-recipe', $(this).is(':checked'));
-            } else {
-                $(this).removeClass('selected-recipe');
-            }
-
-            $(this).toggleClass('disabled-recipe', $(`#field_10_20 input[type="checkbox"][value="${containerId}"]`).prop('disabled'));
-        });
-    }
-
     function setCleanRecipeInputVal() {
         let recipeText = '';
         let selectedRecipes = $(document).find('#field_10_20 input[type="checkbox"]:checked');
-        $i = 1;
+        let i = 1;
 
         selectedRecipes.each(function() {
-            let seperator = ($i != selectedRecipes.length) ? ' | ' : '';
+            let seperator = (i != selectedRecipes.length) ? ' | ' : '';
             recipeText += $(this).next().text() + seperator;
-            $i++;
+            i++;
         });
 
         $(document).find('#input_10_26').val(recipeText);
     }
-    
-    function updateRecipeDetailsClasses(){}
 
     function updateRecipeDetailsClasses() {
         $(document).find('.recipe-details').each(function () {
@@ -251,30 +188,12 @@
         });
 
         setCleanRecipeInputVal();
-        val = $(document).find('#input_10_26').val();
-        console.table("val", val);
     }
-
-    // function updateRecipeDetailsClasses() {
-    //     $(document).find('.recipe-details').each(function () {
-    //         let containerId = $(this).data('id');
-    //         let checkbox = $(document).find('#field_10_20 input[value="' + containerId + '"]');
-        
-    //         if (checkbox.length > 0) {
-    //             let checkedState = checkbox.prop('checked');
-            
-    //             $(this).toggleClass('selected-recipe', checkedState);
-    //             // $(this).toggleClass('disabled-recipe', checkbox.prop('disabled'));
-    //         } else {
-    //             console.warn('Corresponding checkbox not found for container ID:', containerId);
-    //         }
-    //     });
-    // }
 
     function connectRecipeCheckboxesAndImages() {
         const recipeDetails = $(document).find('.recipe-details');
 
-        console.table("recipeDetails", recipeDetails);
+        console.table('recipeDetails', recipeDetails);
 
         recipeDetails.each(function () {
             const recipeImage = $(this).find('.recipe-image');
@@ -291,7 +210,7 @@
                 checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
             });
 
-            selectedRecipeIcon.on('click', function (event) {
+            selectedRecipeIcon.on('click', function () {
                 const checkbox = $(`#field_10_20 input[type="checkbox"][value="${containerId}"]`);
 
                 if (checkbox.prop('disabled')) {
@@ -317,16 +236,14 @@
                     // AJAX
                     getRecipeIdsAndLoadNewInputs();
 
-                    // GLOBAL VARS
+                    // GLOBAL 
                     $('#field_10_20').on('change', 'input[type="checkbox"]', updateRecipeDetailsClasses);
 
                     let form = $(document).find('form#gform_10');
-                    // form.find('#input')
-                    // getRecipeIdsAndLoadNewInputs();
 
                     form.on('change', 'input, radio, checkbox, select', function () {
                         let formArray = $('body form#gform_10').serializeArray();
-                        let emptyInputs = serializeFormAndValidateInputs(formArray);
+                         serializeFormAndValidateInputs(formArray);
                     });
                     
                 }
@@ -338,8 +255,8 @@
             if (event.target.matches('.gpnf-add-entry')) {
                 setTimeout(function () {
                     
-                    checkIfDoggoProfileSubmitIsDefined();
-                    submitBtn.prop("disabled", true);
+                    let submitBtn = $(document).find('.tingle-modal-box__footer .gpnf-btn-submit');
+                    submitBtn.prop('disabled', true);
                     
                     // Dynamic labels & headings
                     let genderNameSpan = $('<span><span class="profile-name-label">Her</span> name is</span>');
@@ -360,49 +277,28 @@
             }
         }, true); 
 
-        
-
         // EVENT: Open/close recipe accordion
-        $(document).on("click", ".profile-recipe-accordion button.group", function () {
+        $(document).on('click', '.profile-recipe-accordion button.group', function () {
             $(this).find('svg').toggleClass('hidden');
             $(this).closest('div').find('.prose').toggleClass('hidden');
         });
 
         // EVENT:: Dynamic name label (she/he)
-        $(document).on("change", "form#gform_10 select#input_10_3", function (event) {
+        $(document).on('change', 'form#gform_10 select#input_10_3', function () {
             let gender = $(this).val();
-            let nameLabelText = (gender == "She") ? 'Her' : 'His';
+            let nameLabelText = (gender == 'She') ? 'Her' : 'His';
             let nameFieldLabel = $(this).closest('div.gfield').next().find('span.profile-name-label');
             nameFieldLabel.text(nameLabelText);
         });
 
         // EVENT:: Dynamic name insertion
-        $(document).on("focusout", "form#gform_10 input#input_10_1", function (event) {
+        $(document).on('focusout', 'form#gform_10 input#input_10_1', function () {
             let name = $(this).val();
 
             if (name.length > 0) {
                 $(this).closest('.tingle-modal').find('.profile-nuetered-label,.profile-describe-section,.profile-activity-label,.profile-body-label,.profile-submit-btn').text(name);
             }
         });
-
-        // $(document).on('change', '#input_10_20 input[type="checkbox"]', function () {
-        //     let form = $(this).closest('.tingle-modal').find('form');
-        //     let isDoggoProfileComplete = validateDoggoProfileForm(form.serializeArray());
-        //     let mer = setMerFromDoggoInputs(form);
-        //     let recipes = [];
-
-        //     $('form #input_10_20 .gchoice').each(function () {
-        //         let input = $(this).find('input');
-                
-        //         if (input.is(':checked')) {
-        //             recipes.push(input.val())
-        //         }
-        //     });
-
-        //     let cost = doggoMonthlyCost(mer, recipes);
-        //     console.table("cost", cost);
-        // });
-
 
     }); // END $(window).load(function()
 
