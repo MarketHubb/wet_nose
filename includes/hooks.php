@@ -101,7 +101,7 @@ add_filter('gform_field_content', function ($content, $field, $value, $lead_id, 
     $disabled_classes = "disabled:bg-gray-200 ";
 
     if ($form_id == 10 || $form_id == 7 && $field->type == 'radio' || $field->type == 'checkbox') {
-        return str_replace('gfield-choice-input', $base_input_classes . $checked_classes . $focus_classes . $hover_active_classes . $disabled_classes, $content);
+        return str_replace('gfield-choice-input', $base_input_classes . $focus_classes . $hover_active_classes . $checked_classes . $disabled_classes, $content);
     }
 
     return $content;
