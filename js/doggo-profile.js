@@ -1,7 +1,7 @@
 (function ($) {
 
     // ## AJAX ##
-    function ajaxGetSubscriptionCost(mer, recipeIds) {
+    function ajaxGetSubscriptionPrice(mer, recipeIds) {
         $.ajax({
             type: "POST",
             url: "/wp-admin/admin-ajax.php",
@@ -13,9 +13,9 @@
             dataType: "json",
 
             success: function (recipeInputsArray) {
+                console.table("recipeInputsArray", recipeInputsArray);
                 if (recipeInputsArray.length) {
-                    let subscriptionCost = getTotalSubscriptionCost(recipeInputsArray);
-                    console.table("subscriptionCost", subscriptionCost);
+                    let subscriptionCost = calculateTotalSubscriptionPrice(recipeInputsArray);
                     if (subscriptionCost > 0) {
                         $('body input#input_10_24').val(subscriptionCost);
                     }
@@ -43,68 +43,67 @@
                 let recipeInputContainer = $('fieldset#field_10_20 .ginput_container');
                 let recipeDetailsContainer = $('<div id="recipe_details_container" class="grid grid-cols-3 gap-x-8 col-span-12"></div>');
                 recipeInputContainer.after(recipeDetailsContainer);
-
-                // Object.entries(data).forEach(([key, value]) => {
-                    // let input = $(document).find('#field_10_20 input[value="' + key + '"]');
-
-                    // if (input.length === 1) {
-                    // let label = input.closest('.gchoice').find('label');
-                    // let recipeDetails = $(value);
-                    // label.after(value);
-                    // } 
-                    // let targetInput = $(document).find('#field_10_20 input[value="' + key + '"]');
-
-                    //     if (targetInput.length === 1) {
-                    //         targetInput.next().html(value);
-                    //     }
-                // });
             },
             complete: function (data) {
                 let targetContainer = $(document).find('#recipe_details_container');
-                // let recipeContainerReversed = Object.keys(data.responseJSON).reverse();
 
                 if (targetContainer.length === 1) {
-                    // Object.entries(data.responseJSON).forEach(([key, value]) => { 
-                    // Object.entries(recipeContainerReversed).forEach(([key, value]) => { 
-                        targetContainer.append(data.responseJSON);
-                    // });
+                    targetContainer.append(data.responseJSON);
+                    connectRecipeCheckboxesAndImages();
                 }
             }
         });
     }
 
     // ## FUNCTIONS ##
-    function getRecipeIdsAndLoadNewInputs() {
+    function getRecipeIds(checked) {
+        checked = !!checked;
+
+        let targetCheckboxEl = (checked) ? 'input[type="checkbox"]:checked' : 'input[type="checkbox"]';
+
         var recipeIds = [];
 
-        $(document).find('#input_10_20 input[type="checkbox"]').each(function () {
+        $(document).find('#input_10_20 ' + targetCheckboxEl).each(function () {
             recipeIds.push($(this).val());
-            if ($(this).attr("checked")) {
-                console.table("Checked", $(this).val());
-            } else {
-                console.table("NOT checked", $(this).val());
-            }
         });
+
+        return recipeIds;
+    }
+
+    function getRecipeIdsAndLoadNewInputs() {
+        let recipeIds = getRecipeIds();        
 
         if (recipeIds.length > 0) {
             populateRecipeInputsDoggoProfile(recipeIds);
         }
     }
-    function getTotalSubscriptionCost(recipeArray) {
-        let totalCost = 0;
+    function calculateTotalSubscriptionPrice(data) {
+        let totalPrice = 0;
 
-        for (let i = 0; i < recipeArray.length; i++) {
-            for (let j = 0; j < recipeArray[i].length; j++) {
-                totalCost += recipeArray[i][j].price.cost;
-            }
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i][0];
+            totalPrice += item.price.price;
         }
 
-        return totalCost.toFixed(2);
+        console.table("totalPrice", totalPrice);
+
+        return totalPrice;
+
+        // let totalPrice = 0;
+
+        // for (let i = 0; i < recipeArray.length; i++) {
+        //     for (let j = 0; j < recipeArray[i].length; j++) {
+        //         totalPrice += recipeArray[i][j].price.price;
+        //     }
+        // }
+
+        // console.table("totalCost", totalPrice);
+
+        // return totalPrice.toFixed(2);
     }
 
 
     function validateDoggoProfileForm(formInputs) {
-        console.table("formInputs", formInputs);
         let emptyInputs = [];
 
         for (const item of formInputs) {
@@ -120,10 +119,10 @@
         let rer;
         let mer;
 
-        let signalment = Number(formArray.find(item => item.name === "input_6").value);
-        let activity = Number(formArray.find(item => item.name === "input_15").value);
-        let bodyType = Number(formArray.find(item => item.name === "input_16").value);
-        let weight = Number(formArray.find(item => item.name === "input_17").value);
+        let signalment = Number(formArray.find(item => item.name === "input_6")?.value) || undefined;
+        let activity = Number(formArray.find(item => item.name === "input_15")?.value) || undefined;
+        let bodyType = Number(formArray.find(item => item.name === "input_16")?.value) || undefined;
+        let weight = Number(formArray.find(item => item.name === "input_17")?.value) || undefined;
 
         if (!signalment || !activity || !bodyType || !weight) {
             return false;
@@ -175,16 +174,15 @@
         
         $('input#input_10_18').val(mer);
 
-        let recipeIds = [];
+        let selectedRecipeIds = [];
 
         $(document).find('form#gform_10 #input_10_20 input[type="checkbox"]:checked').each(function () {
-            recipeIds.push($(this).val());
+            selectedRecipeIds.push($(this).val());
         });
 
-        if (recipeIds.length > 0) {
-            ajaxGetSubscriptionCost(mer, recipeIds)
+        if (selectedRecipeIds.length > 0) {
+            ajaxGetSubscriptionPrice(mer, selectedRecipeIds)
         }
-        
     }
 
     function serializeFormAndValidateInputs(formArray) {
@@ -199,8 +197,114 @@
             formArray.push({ name: "input_20", value: "" });
         }
 
+        setMerAndSubscriptionCost(formArray);
+
         return validateDoggoProfileForm(formArray);
     }
+
+    function getSelectedRecipeCheckboxes() {
+        $(document).find('#field_10_20 input[type="checkbox"]').each(function () {
+            // if ($(this).prop('checked')) {
+            console.table("$(this)", $(this));
+            // }
+        });
+    }
+
+    function setActiveClassesForRecipeDetails(recipeDetails, selectedRecipeVal) {
+        recipeDetails.each(function () {
+            const containerId = $(this).data('id').toString();
+
+            if (containerId === selectedRecipeVal) {
+                $(this).toggleClass('selected-recipe', $(this).is(':checked'));
+            } else {
+                $(this).removeClass('selected-recipe');
+            }
+
+            $(this).toggleClass('disabled-recipe', $(`#field_10_20 input[type="checkbox"][value="${containerId}"]`).prop('disabled'));
+        });
+    }
+
+    function setCleanRecipeInputVal() {
+        let recipeText = '';
+        let selectedRecipes = $(document).find('#field_10_20 input[type="checkbox"]:checked');
+        $i = 1;
+
+        selectedRecipes.each(function() {
+            let seperator = ($i != selectedRecipes.length) ? ' | ' : '';
+            recipeText += $(this).next().text() + seperator;
+            $i++;
+        });
+
+        $(document).find('#input_10_26').val(recipeText);
+    }
+    
+    function updateRecipeDetailsClasses(){}
+
+    function updateRecipeDetailsClasses() {
+        $(document).find('.recipe-details').each(function () {
+            let containerId = $(this).data('id');
+            let checkbox = $(document).find('#field_10_20 input[value="' + Number(containerId) + '"]');
+            let checkedState = checkbox.prop('checked');
+
+            $(this).toggleClass('selected-recipe', checkedState);
+            $(this).toggleClass('disabled-recipe', checkbox.prop('disabled'));
+        });
+
+        setCleanRecipeInputVal();
+        val = $(document).find('#input_10_26').val();
+        console.table("val", val);
+    }
+
+    // function updateRecipeDetailsClasses() {
+    //     $(document).find('.recipe-details').each(function () {
+    //         let containerId = $(this).data('id');
+    //         let checkbox = $(document).find('#field_10_20 input[value="' + containerId + '"]');
+        
+    //         if (checkbox.length > 0) {
+    //             let checkedState = checkbox.prop('checked');
+            
+    //             $(this).toggleClass('selected-recipe', checkedState);
+    //             // $(this).toggleClass('disabled-recipe', checkbox.prop('disabled'));
+    //         } else {
+    //             console.warn('Corresponding checkbox not found for container ID:', containerId);
+    //         }
+    //     });
+    // }
+
+    function connectRecipeCheckboxesAndImages() {
+        const recipeDetails = $(document).find('.recipe-details');
+
+        console.table("recipeDetails", recipeDetails);
+
+        recipeDetails.each(function () {
+            const recipeImage = $(this).find('.recipe-image');
+            const selectedRecipeIcon = $(this).find('.selected-recipe-icon');
+            const containerId = $(this).data('id');
+
+            recipeImage.on('click', function () {
+                const checkbox = $(`#field_10_20 input[type="checkbox"][value="${containerId}"]`);
+
+                if (checkbox.prop('disabled')) {
+                    return; 
+                }
+
+                checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+            });
+
+            selectedRecipeIcon.on('click', function (event) {
+                const checkbox = $(`#field_10_20 input[type="checkbox"][value="${containerId}"]`);
+
+                if (checkbox.prop('disabled')) {
+                    return; 
+                }
+
+                checkbox.prop('checked', false).trigger('change');
+            });
+        });
+
+        updateRecipeDetailsClasses();
+    }
+
 
     // ## WINDOW LOAD ##
     $(document).ready(function () {
@@ -210,8 +314,11 @@
                 var $modal = $('.gpnf-modal-7-8');
                 if ($modal.length > 0 && $modal.hasClass('tingle-modal--visible')) {
                     
-                    // Recipe details (ajax)
+                    // AJAX
                     getRecipeIdsAndLoadNewInputs();
+
+                    // GLOBAL VARS
+                    $('#field_10_20').on('change', 'input[type="checkbox"]', updateRecipeDetailsClasses);
 
                     let form = $(document).find('form#gform_10');
                     // form.find('#input')
@@ -220,16 +327,8 @@
                     form.on('change', 'input, radio, checkbox, select', function () {
                         let formArray = $('body form#gform_10').serializeArray();
                         let emptyInputs = serializeFormAndValidateInputs(formArray);
-
-                        if (emptyInputs.length <= 2) {
-                            setMerAndSubscriptionCost(formArray);
-                        }
                     });
-
-                    // Example: Attaching a click event handler to a button inside the modal
-                    $modal.find('.my-custom-button').on('click', function () {
-                        console.log('Custom button clicked!');
-                    });
+                    
                 }
             }
         });

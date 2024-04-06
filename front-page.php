@@ -63,7 +63,6 @@ get_template_part('template-parts/testimonial/content', 'stars', $test2_args);
 ?>
 
 
-
 <?php get_template_part('template-parts/global/content', 'card-image-left'); ?>
 
 <?php //get_template_part('template-parts/section/content' , 'split') 

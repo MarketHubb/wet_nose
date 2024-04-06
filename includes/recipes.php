@@ -256,7 +256,7 @@ function ingredientWeight($ingredient, $quantity, $units, $adjustment)
     return $weights ?: null;
 }
 
-function calculateRecipePrice($recipe_totals, $profit_type, $profit_amount)
+function calculateRecipePriceLegacy($recipe_totals, $profit_type, $profit_amount)
 {
     if ($profit_type && $profit_amount && $recipe_totals['cost']) {
 
@@ -273,6 +273,37 @@ function calculateRecipePrice($recipe_totals, $profit_type, $profit_amount)
     }
 
     return $price ?: null;
+}
+
+function calculateRecipePrice($recipe, $cost)
+{
+    $profit_type = $recipe['recipe_recipes']['profit_type'];
+    $profit_amount = floatval($recipe['recipe_recipes']['profit_amount']);
+    $profit_percentage = floatval($recipe['recipe_recipes']['profit_percentage']);
+
+    if ($profit_type && $cost) {
+
+        if ($profit_type === "Amount") {
+            $price = $cost + $profit_amount;
+            $formatted_amount = '$' . $profit_amount;
+        } elseif ($profit_type === "Percentage") {
+            $price = $cost + ($cost * $profit_percentage / 100);
+            $formatted_amount = $profit_percentage . '%';
+        } else {
+            // If an invalid profit_type is provided, return the original cost
+            $price = $cost;
+            $formatted_amount = '';
+        }
+
+        $result = [
+            'type' => $profit_type,
+            'amount' => $formatted_amount,
+            'cost' => $cost,
+            'price' => round($price, 2)
+        ];
+    }
+
+    return $result;
 }
 
 function recipeTotals($ingredients = [], $adjustment = 1)
@@ -367,7 +398,7 @@ function getIngredientsforRecipes($post_id, $adjustment = null, $name = null)
         $recipe_name =  $recipe['recipe_recipes']['name'];
         $ingredients_list = getCalsForRecipeIngredients($recipe['recipe_recipes']['ingredients'], $adjustment, $name);
         $recipe_totals = recipeTotals($ingredients_list);
-        $recipe_price = calculateRecipePrice($recipe_totals, $profit_type, $profit_amount);
+        $recipe_price = calculateRecipePrice($recipe, $recipe_totals['cost']);
 
         $ingredients[] = [
             "id" => $post_id,

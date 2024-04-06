@@ -3,18 +3,18 @@
 function recipe_macros_for_doggo_profile($post_id)
 {
     $recipe_inputs = getIngredientsforRecipes($post_id, 1);
-    $output = '<dl class="grid grid-cols-2 gap-y-3 content-center items-center md:grid-cols-2 text-base">';
-    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Protein:</span></dt>';
-    $output .= '<dd class="mt-0 border-transparent">';
+    $output = '<dl class="grid grid-cols-2 gap-y-3 content-center items-center md:grid-cols-2 text-base mt-3">';
+    $output .= '<dt class="mt-0"><span class="stylized text-gray-500 inline-block w-full">Protein:</span></dt>';
+    $output .= '<dd class="mt-0 pl-0  border-transparent">';
     $output .= '<span class="stylized font-bold ps-0 mt-0">';
     $output .= $recipe_inputs[0]['totals']['protein']['percent'] . '%';
     $output .= '</span></dd>';
-    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Fat:</span></dt>';
-    $output .= '<dd class="mt-0"><span class="stylized font-bold ps-0 mt-0">';
+    $output .= '<dt class="mt-0"><span class="stylized text-gray-500 inline-block w-full">Fat:</span></dt>';
+    $output .= '<dd class="mt-0 pl-0 "><span class="stylized font-bold ps-0 mt-0">';
     $output .= $recipe_inputs[0]['totals']['fat']['percent'] . '%';
     $output .= '</span></dd>';
-    $output .= '<dt class="mt-0"><span class="stylized  inline-block w-full">Carbs:</span></dt>';
-    $output .= '<dd class="mt-0"><span class="stylized font-bold ps-0 mt-0">';
+    $output .= '<dt class="mt-0"><span class="stylized text-gray-500 inline-block w-full">Carbs:</span></dt>';
+    $output .= '<dd class="mt-0 pl-0 "><span class="stylized font-bold ps-0 mt-0">';
     $output .= $recipe_inputs[0]['totals']['carbs']['percent'] . '%';
     $output .= '</span></dd></dl>';
 
@@ -25,7 +25,7 @@ function recipe_ingredients_for_doggo_profile($post_id)
     $recipe_inputs = getIngredientsforRecipes($post_id, 1);
     $ingredient_count = count($recipe_inputs[0]['ingredients']);
 
-    $output  = '<p class="text-base">';
+    $output  = '<p class="text-base mt-4 mb-2">';
     $output .= '<span class="emphasis whitespace-nowrap font-bold mt-2">' . $ingredient_count . ' simple ingredients</span>';
     $output .= '</p>';
     $output .= '<dl class="grid grid-cols-1 text-base leading-7 text-gray-600">';
@@ -51,13 +51,15 @@ function recipe_details_for_doggo_profile($post_id, $iteration)
     $recipe_details = ['Ingredients', 'Macros'];
     $i = 1;
 
-    $output  = '<div class="container mx-auto recipe-details py-3 px-1">';
+    $output  = '<div class="container mx-auto recipe-details py-3 px-1" data-id="' . $post_id . '">';
     $output .= '<div class="text-center mb-6 relative">';
 
     // $output .= '<h3 class="text-lg mb-5 block stylized whitespace-nowrap font-bold">';
     // $output .= get_the_title($post_id) . '</h3>';
-    $output .= '<img class="aspect-[12/10] object-bottom w-full object-cover rounded-md shadow" src="' . get_field('recipe_image', $post_id)['url'] . '" />';
-    $output .= '<img src="' . get_home_url() . '/wp-content/uploads/2023/12/check.svg" class="selected-recipe-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-24"/>';
+    $output .= '<img class="recipe-image aspect-[12/10] object-bottom w-full object-cover rounded-md shadow" src="' . get_field('recipe_image', $post_id)['url'] . '" />';
+    $output .= '<img src="' . get_home_url() . '/wp-content/uploads/2023/12/check.svg" class="selected-recipe-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-14 filter-yellow h-full w-full max-w-100 z-10"/>';
+    $output .= '<div class="absolute inset-0 bg-black bg-opacity-50 rounded-md recipe-image-bg"></div>';
+
     $output .= '</div>';
 
     foreach ($recipe_details as $recipe_detail) {
@@ -160,7 +162,7 @@ function section_start_classes($spacer_classes = true, $additional_classes = nul
 }
 function section_open()
 {
-    return '<div class="mx-auto container py-24">';
+    return '<div class="mx-auto container py-12 lg:py-24">';
 }
 function section_pre_heading($string)
 {
@@ -169,7 +171,7 @@ function section_pre_heading($string)
 function section_heading($string, $custom_classes = null)
 {
     $string = emphasis_text_in_copy($string);
-    $base_classes = ' mt-2 text-5xl font-heading font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl';
+    $base_classes = ' mt-2 text-2xl lg:text-5xl font-heading font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl';
     $class_names = ($custom_classes) ? $custom_classes . $base_classes : $base_classes;
     return "<h3 class=\"${class_names}\">${string}</h3>";
 }
@@ -205,7 +207,7 @@ function get_hero_alert($hero)
 
 function get_hero_description($hero)
 {
-    return '<p class="mt-3 md:mt-6 text-2xl text-gray-700">' . $hero['hero_description'] . '</p>';
+    return '<p class="mt-3 md:mt-6 text-base lg:text-lg xl:text-xl leading-6 xl:leading-7 text-gray-700">' . $hero['hero_description'] . '</p>';
 }
 
 // region Global (String)

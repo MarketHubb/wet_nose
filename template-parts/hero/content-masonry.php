@@ -18,18 +18,18 @@
                 <div class="aspect-[801/1036] w-[50.0625rem] bg-gradient-to-tr from-[#fff] to-[#fff] opacity-30" style="clip-path: polygon(63.1% 29.5%, 100% 17.1%, 76.6% 3%, 48.4% 0%, 44.6% 4.7%, 54.5% 25.3%, 59.8% 49%, 55.2% 57.8%, 44.4% 57.2%, 27.8% 47.9%, 35.1% 81.5%, 0% 97.7%, 39.2% 100%, 35.2% 81.4%, 97.2% 52.8%, 63.1% 29.5%)"></div>
             </div>
             <div class="overflow-hidden">
-                <div class="mx-auto max-w-7xl px-6 pb-32 pt-36 sm:pt-60 lg:px-8 lg:pt-32">
+                <div class="mx-auto max-w-7xl px-6 py-16 lg:pb-32 lg:pt-36 lg:px-8">
                     <div class="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
                         <div class="w-full max-w-xl lg:shrink-0 xl:max-w-2xl">
-                            <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                            <h1 class="text-2xl lg:text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
                                 <?php echo emphasis_text_in_copy($args['heading']); ?>
                             </h1>
                             <p class="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none">
                                 <?php echo $args['description']; ?>
                             </p>
-                            <div class="mt-10 flex items-center gap-x-6">
+                            <div class="mt-10 flex flex-col lg:flex-row items-center gap-x-6">
                                 <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">See What's in Each Bag</a>
-                                <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Build Your Doggo Profile <span aria-hidden="true">→</span></a>
+                                <a href="#" class="text-sm font-semibold leading-6 text-gray-900 mt-12 lg:mt-0">Build Your Doggo Profile <span aria-hidden="true">→</span></a>
                             </div>
                         </div>
 

@@ -2,15 +2,10 @@
 <div class="mx-auto container flex flex-row justify-between">
     <div>
         <a href="<?php echo home_url(); ?>">
-            <img class="max-h-14 py-2 w-auto" src="<?php echo get_field('logo', 'option'); ?>" />
+            <img class="max-h-14 py-2.5 w-auto" src="<?php echo get_field('logo', 'option'); ?>" />
         </a>
     </div>
     <div class="text-center flex items-center" id="nav-bar-slideout">
-        <?php if (is_user_logged_in()) { ?>
-            <a class="pt-1 pr-2 inline-block" href="<?php echo get_permalink(698); ?>" title="My Account">My Account</a> 
-        <?php } else { ?>
-            <a class="pt-1 pr-2 inline-block" href="<?php echo get_permalink(680); ?>" title="Account Login">Login</a>
-        <?php } ?>
         <button id="openMenuIcon" class="bg-transparent text-gray-600 hover:text-gray-950 font-medium text-4xl md:text-5xl normal-case" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
             <span class="leading-none text-primary">&#9776;</span>
         </button>
@@ -34,7 +29,7 @@
                 while (have_rows('primary_menu', 'option')) : the_row();
                     $menu_obj = get_sub_field('menu_page', 'option');
                     $base_classes = (!get_sub_field('menu_callout', 'option')) ? "inline-flex stylized font-semibold items-center border-b-2 border-transparent py-1.5" : "inline-flex btn stylized items-center rounded-md bg-secondary hover:bg-secondary-light px-4 md:px-3 pt-2 pb-1 mt-1 font-semibold text-white shadow-sm hover:text-white";
-                    $active_class = ($menu_obj->ID === get_queried_object_id()) ? "emphasis" : "";
+                    $active_class = ($menu_obj->ID === get_queried_object_id()) ? "" : "";
                     $color_class = ($menu_obj->ID === get_queried_object_id()) ? "text-gray-800 hover:text-gray-700" : "text-gray-500 hover:text-gray-700";
                     $menu_items .= '<li><a href="' . get_permalink($menu_obj) . '" class="' . $base_classes . ' ' . $color_class . ' ' . $active_class . '">' . get_the_title($menu_obj);
 

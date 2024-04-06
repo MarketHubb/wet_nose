@@ -1,4 +1,4 @@
-<div class="bg-white py-24 sm:py-32">
+<div class="bg-white py-16 lg:py-24">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <div class="mx-auto max-w-2xl sm:text-center">
             <?php echo section_pre_heading("About Us"); ?>

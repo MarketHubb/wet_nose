@@ -9,7 +9,7 @@ module.exports = {
         './*/*.{php,js}',
         './*/*/*.{php,js}',
         './*/*/*/*.{php,js}',
-        './woocommerce/myaccount/*.php',
+        './js/*.js',
     ],
     theme: {
         container: {
@@ -28,6 +28,11 @@ module.exports = {
                 secondaryLight: '#C00326',
                 input: '#9f763c',
                 inputFill: '#FCF6E6',
+                inputLabel: '#44331A',
+                redSoft: '#bb6c5d',
+                redSoftDark: '#AA5747',
+                redSoftLight: '#C07769',
+                tan: '#FAF8F0'
             },
             // colors: tailpress.colorMapper(tailpress.theme('settings.color.palette', theme)),
             fontSize: tailpress.fontSizeMapper(tailpress.theme('settings.typography.fontSizes', theme))

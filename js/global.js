@@ -28,32 +28,8 @@
         });
     }
 
-    // Show zip code warning
-    function form_verify_zip(zip) {
-        $.ajax({
-            type: "POST",
-            url: "/wp-admin/admin-ajax.php",
-            data: {
-                action: "form_verify_zip",
-                zip: zip,
-            },
-            dataType: "json",
-
-            success: function (data) {
-                if (!data[1]) {
-                    zipWarning.removeClass('hidden');                    
-                } else {
-                    zipWarning.addClass('hidden');
-                }
-            },
-            complete: function () {
-
-            }
-        });
-    }
-
     // Verify zip code
-    function form_verify_zip(zip) {
+    function ajaxVerifyZip(zip) {
         $.ajax({
             type: "POST",
             url: "/wp-admin/admin-ajax.php",
@@ -124,9 +100,10 @@
             $('#gf_step_7_1').html(formHeading[0]);
             $('#gf_step_7_2').html(formHeading[1]);
             $('#gf_step_7_3').html(formHeading[2]);
-            $('#gf_step_7_4').html(formHeading[3]);
-            $('#gf_step_7_5').html(formHeading[4]);     
         }
+
+        let formPageHeadingClass = "grid-cols-" + formHeading.length;
+        $('#gf_page_steps_7').addClass(formPageHeadingClass);
 
         activeFormPage();
     }
@@ -162,7 +139,8 @@
     }
 
     function setMaxLengthZip() {
-        $('#input_7_19').attr('maxlength', 5);
+        // $('#input_7_19').attr('maxlength', 5);
+        $('#input_7_40_5').attr('maxlength', 5);
     }
 
     function verifyZip(el) {
@@ -175,7 +153,7 @@
         
         if (zipRef !== zipVal) {
             zipRef = zipVal
-            form_verify_zip(zipVal);
+            ajaxVerifyZip(zipVal);
         }
     }
 
@@ -193,7 +171,8 @@
     const closeMenuIcon = $("#closeMenuIcon");
     const sidebarNav = $("#drawer-navigation");
     const form = $('form#gform_7');
-    const zip = $('input#input_7_19');
+    // const zip = $('input#input_7_19');
+    const zip = $('input#input_7_40_5');
     const zipWarning = $('#zip-warning');
     let zipRef;
 
@@ -206,9 +185,9 @@
 
         // FORM: Zip code - Set max length (5) | Move warning | Verify location
         // setMaxLengthZip();
-        // zip.parent().after(zipWarning);
-        // zip.on("keyup", $(this), verifyZip);
-        // zip.on("focusout", $(this), verifyZip);
+        zip.closest('.ginput_container').after(zipWarning);
+        zip.on("keyup", $(this), verifyZip);
+        zip.on("focusout", $(this), verifyZip);
 
         // Load form weight icons
         $('head').append('<style>#gform_wrapper_7 choice_6_16_0::before:before{width:800px !important;}</style>');
@@ -242,16 +221,51 @@
         jQuery(document).on('gform_page_loaded', function (event, form_id, current_page) {
             setFormHeading();
 
-            if (current_page == 1) {
-                // Populate hidden username input (#input_7_27)
-                // $('#gform_7 input').on('change', function() {
-                //     console.log("it changed");
-                // });
+            if (current_page == 2) {
             }
 
             if (current_page == 3) {
-                // FORM: Recipes - Add data-count attribute
-                // setRecipesCountAttr();
+                let couponInput = $('#gf_coupon_code_7');
+                couponInput.val("WETNOSE10");
+                
+                let dogNames = '';
+                let dogs = $(document).find('.dog-name')
+
+                dogs.each(function (index) {
+                    if ($(this).text().length > 0) {
+                        let separator = (dogs.length > index + 2) ? ', and ' : '';
+                        dogNames += $(this).text() + separator;    
+                    }
+                    
+                });
+                
+                let dailyRate = (parseFloat($('#input_7_32').text().replace('$', '')) / 30).toFixed(2);
+                let sectionHeadingContainer = $('#field_7_22');
+                let sectionHeadingDescription = $('<span class="text-lg mt-2 inline-block">' + dogNames + ' will love our healthy, homemade dog food.</span>');
+                let sectionHeadingText = $('<span class="stylized"> for only <strong class="emphasis ml-1">$' + dailyRate + '<span class="font-thin font-base">/</span>day</strong></span>');
+                sectionHeadingText.appendTo(sectionHeadingContainer.find('h3'));
+                $('#gfield_description_7_22').html(sectionHeadingDescription);
+                // let updatedText = sectionHeading.text() + ' for only $' + dailyRate + '/day';
+                // sectionHeading.text(updatedText);
+
+                $('#gform_page_7_3 .gform_page_footer').hide();
+                let checkoutDetailsContainer = $('<div id="form-checkout-details" class="col-start-8 col-span-5 md:px-16 md:pt-[4rem] bg-inputFill h-full w-full"></div>');
+                checkoutDetailsContainer.insertAfter('#gform_fields_7_3');
+
+
+                let checkoutDetails = $(document).find('#form-checkout-details');
+                $('#field_7_35').appendTo(checkoutDetails);
+                $('#field_7_35').appendTo(checkoutDetails);
+                $('#field_7_41').appendTo(checkoutDetails);
+                $('#field_7_39').appendTo(checkoutDetails);
+                $('#field_7_43').appendTo(checkoutDetails);
+                $('#field_7_32').appendTo(checkoutDetails);
+                $('#field_7_42').appendTo(checkoutDetails);
+                $('#field_7_38').appendTo(checkoutDetails);
+                $('<button type="submit" class="w-full mt-6 rounded-md shadow-md hover:shadow-none border border-transparent bg-redSoft px-4 py-3 text-lg font-bold text-white hover:bg-redSoft focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">Subscribe</button>').appendTo(checkoutDetails);
+
+                $(document).find('#form-checkout-details')
+
             }
 
             if (current_page == 4) {

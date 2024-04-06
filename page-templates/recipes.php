@@ -5,7 +5,7 @@ get_header();
 <div class="bg-main py-10">
 
 <?php //get_template_part('template-parts/internal/content', 'ingredients'); ?>
-<?php get_template_part('template-parts/tailwind/content', 'product-page'); ?>
+<?php //get_template_part('template-parts/tailwind/content', 'product-page'); ?>
 
 <?php 
 $recipes = get_posts(array(

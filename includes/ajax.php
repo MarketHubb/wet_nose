@@ -172,7 +172,7 @@ function doggo_monthly_cost()
     if (!empty($_POST['mer']) && !empty($_POST['recipeIds'])) {
         $daily_mer = $_POST['mer'];
         $recipe_ids = $_POST['recipeIds'];
-        $cals_per_recipe = ($daily_mer * 30) / count($recipe_ids);
+        $cals_per_recipe_monthly = ($daily_mer * 30) / count($recipe_ids);
 
         if ($daily_mer <= 0 || empty($recipe_ids)) {
             die();
@@ -186,7 +186,7 @@ function doggo_monthly_cost()
             // $base_recipe_inputs[] = getIngredientsforRecipes($recipe_id, 1);
             $base_recipe = getIngredientsforRecipes($recipe_id, 1);
             $base_cals = $base_recipe[0]['totals']['calories'];
-            $adjustment = floatval($cals_per_recipe / $base_cals);
+            $adjustment = floatval($cals_per_recipe_monthly / $base_cals);
             $adjusted_recipe = getIngredientsforRecipes($recipe_id, $adjustment);
             $output[] = $adjusted_recipe;
         }
@@ -213,7 +213,7 @@ function form_verify_zip()
     if (!empty($_POST['zip'])) {
         $output = [];
 
-        $zip_codes_in_range = get_field('form_zip_codes', 'option');
+        $zip_codes_in_range = get_field('allowed_zip_codes', 'option');
         $zip_codes_in_range = explode(',', $zip_codes_in_range);
         $zip_codes_in_range = array_map('trim', $zip_codes_in_range);
 
